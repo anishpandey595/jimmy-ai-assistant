@@ -1,63 +1,85 @@
 import psutil
-# get cpu usage
+import pyttsx3
+import speech_recognition as sr
+import winsound
+import time
+import requests
+
+# Get CPU usage
 def get_cpu_usage():
     cpu_percent = psutil.cpu_percent(interval=1)
     return cpu_percent
-# this function is used to convert text to speech
-import pyttsx3
+
+# Text-to-speech function
 def say(text):
-    eng = pyttsx3.init()  # initialize an instance
-    voice = eng.getProperty('voices')  # get the available voices
-    # eng.setProperty('voice', voice[0].id) #set the voice to index 0 for male voice
-    eng.setProperty('voice', voice[2].id)  # changing voice to index 1 for heeraM and 2 for zira  female voice
+    eng = pyttsx3.init()  
+    voice = eng.getProperty('voices')  
+    eng.setProperty('voice', voice[2].id)  # Zira female voice
     eng.say(text)
-    eng.runAndWait()  # run and process the voice command
-# this function is used to recognize voice command
-import speech_recognition as sr
+    eng.runAndWait()  
+
+# Voice recognition function
 def takecommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         r.pause_threshold = 0.8
         print("Listening...")
-        audio = r.listen(source,phrase_time_limit=3)
+        audio = r.listen(source, phrase_time_limit=3)
         try:
             query = r.recognize_google(audio, language="en-in")
-            print(f" User said: {query}")
+            print(f"User said: {query}")
             return query
-        except Exception as e:
-            return " "
-# function for setting a remainder
-import winsound
-import time
+        except Exception:
+            return ""
 
+# Reminder function (Fixed string formatting and error handling)
 def set_reminder():
-    time_in_seconds = takecommand()
-    print("Setting reminder for", time_in_seconds, "seconds")
-    say("Setting reminder for", time_in_seconds , "seconds")
+    say("How many seconds should I wait for the reminder?")
+    time_input = takecommand()
+    print(f"Heard time: {time_input}")
+    
+    try:
+        # Attempt to convert spoken words/numbers into an integer
+        time_in_seconds = int(''.join(filter(str.isdigit, time_input)))
+    except ValueError:
+        say("Sorry, I could not understand the time. Please try again.")
+        return
+
+    say(f"Setting reminder for {time_in_seconds} seconds.")
+    
+    say("What is the reminder message?")
     message = takecommand()
-    print("Reminder:", message)
-    say("Reminder:", message)
+    print(f"Reminder message: {message}")
+    
+    say(f"Okay, I will remind you about: {message}")
     time.sleep(time_in_seconds)
-    print("Reminder:", message)
+    
+    print(f"Reminder Alert: {message}")
+    say(f"Reminder Alert: {message}")
     winsound.Beep(2500, 1000)  # Play a sound to grab attention
 
-# this function is used to get weather of a particular city
-import requests
-def weather():
-    print("please tell me the city name")
-    say("please tell me the city name")
+# Weather function (Fixed API key variable scope)
+def weather(weather_api_key):
+    say("Please tell me the city name.")
     city = takecommand()
-    def get_weather(city):
-        key = weather_key
-        url = "http://api.weatherapi.com/v1/current.json?key=" + key + "&q=" + city + "&aqi=no&lang=en&alerts=yes"
+    
+    if not city.strip():
+        say("I did not catch the city name.")
+        return
+
+    try:
+        url = f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={city}&aqi=no&lang=en&alerts=yes"
         response = requests.get(url)
-        return response.json()
-    name = get_weather(city)["location"]["name"]
-    temp_c = get_weather(city)["current"]["temp_c"]
-    #    wind_kph = get_weather(city)["current"]["wind_kph"]
-    #   humidity = get_weather(city)["current"]["humidity"]
-    feelslike_c = get_weather(city)["current"]["feelslike_c"]
-    condition = get_weather(city)["current"]["condition"]["text"]
-    a = ("waeather in", name, "temp is ", temp_c, "degree in celcius", "feels like ",
-         feelslike_c, "degree in celcius", "and condition is", condition)
-    say(a)
+        data = response.json()
+        
+        name = data["location"]["name"]
+        temp_c = data["current"]["temp_c"]
+        feelslike_c = data["current"]["feelslike_c"]
+        condition = data["current"]["condition"]["text"]
+        
+        weather_report = f"Weather in {name}. Temperature is {temp_c} degrees Celsius, feels like {feelslike_c} degrees, and conditions are {condition}."
+        print(weather_report)
+        say(weather_report)
+    except Exception as e:
+        print(f"Error fetching weather: {e}")
+        say("Sorry, I was unable to retrieve the weather data.")
