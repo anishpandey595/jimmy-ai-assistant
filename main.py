@@ -29,9 +29,6 @@ def MainExecution(query):
     if "hello" in Query:
         say("Hello Sir, Welcome Back!")
 
-    elif "bye" in Query:
-        say("Nice to meet you sir, Have a nice day!")
-
     elif "time" in Query:
         from datetime import datetime
         time = datetime.now().strftime("%H:%M")
@@ -39,6 +36,4 @@ def MainExecution(query):
 
     elif "bye" in Query:
         say("Nice to meet you sir, Have a nice day!")
-
-    elif "bye" in Query:
-        say("Nice to meet you sir, Have a nice day!")
+        return True 
