@@ -1,0 +1,4 @@
+greetings\tHello! How can I help you today?
+greetings\tHi there!
+goodbye\tGoodbye! Have a nice day.
+goodbye\tBye for now
