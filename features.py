@@ -1,9 +1,13 @@
 import psutil
 import pyttsx3
 import speech_recognition as sr
-import winsound
 import time
 import requests
+import platform
+
+# Only import winsound if running on Windows
+if platform.system() == "Windows":
+    import winsound
 
 # Get CPU usage
 def get_cpu_usage():
@@ -32,14 +36,13 @@ def takecommand():
         except Exception:
             return ""
 
-# Reminder function (Fixed string formatting and error handling)
+# Reminder function (Cross-platform safe)
 def set_reminder():
     say("How many seconds should I wait for the reminder?")
     time_input = takecommand()
     print(f"Heard time: {time_input}")
     
     try:
-        # Attempt to convert spoken words/numbers into an integer
         time_in_seconds = int(''.join(filter(str.isdigit, time_input)))
     except ValueError:
         say("Sorry, I could not understand the time. Please try again.")
@@ -56,9 +59,15 @@ def set_reminder():
     
     print(f"Reminder Alert: {message}")
     say(f"Reminder Alert: {message}")
-    winsound.Beep(2500, 1000)  # Play a sound to grab attention
+    
+    # Cross-platform sound trigger
+    if platform.system() == "Windows":
+        winsound.Beep(2500, 1000)
+    else:
+        # Linux bell sound alternative using text output / print
+        print("\a") # Terminal bell
 
-# Weather function (Fixed API key variable scope)
+# Weather function
 def weather(weather_api_key):
     say("Please tell me the city name.")
     city = takecommand()
