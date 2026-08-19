@@ -1,3 +1,44 @@
+🤖 Jimmy AI Assistant
+
+A modular, multi-modal personal voice assistant built with Python. It integrates offline speech recognition, computer vision face verification, system automation, and cloud AI capabilities.
+🛠️ System Prerequisites & Dependencies
+
+Before running the assistant, ensure you have Python 3.8+ installed on your system.
+1. System-Level Dependencies (Linux / Fedora)
+
+If you are running on Linux, install the required audio and GUI packages first by running:
+sudo dnf install espeak-ng python3-tkinter scrot -y
+2. Python Packages
+
+Install all required libraries via pip by running:
+pip install pyttsx3 speechrecognition psutil scikit-learn requests opencv-python opencv-contrib-python pyautogui
+🚀 Installation & Setup
+
+    Clone the repository:
+    git clone https://github.com/anishpandey595/jimmy-ai-assistant.git
+    cd jimmy-ai-assistant
+
+    Add Optional Offline Models (If using Vosk):
+
+        Download the Hindi Vosk model (vosk-model-hi-0.22) from the Official Vosk Models Website.
+
+        Extract the folder directly into your project root directory.
+
+    Run the Master Assistant:
+    python3 main.py
+
+📂 Project Architecture
+
+    main.py — The master orchestration script (handles startup, face verification, greeting, and main voice command loop).
+
+    features.py — Utility module for system monitoring (CPU usage), timers/reminders, and live weather reporting.
+
+    face_recoginition.py — Biometric security module using OpenCV.
+
+    vosk_kaldi.py — Offline speech recognition engine for local voice processing.
+
+    friday_meta_LL2.py — Cloud integration module for advanced AI processing.
+
 ### Important Note on Facial Recognition
 The `face_recoginition.py` module uses OpenCV's LBPH algorithm to identify the user. For privacy and file-size reasons, the pre-trained model is not included in this repository. 
 
